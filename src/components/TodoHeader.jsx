@@ -10,18 +10,10 @@ const useStyles = theme => ({
     container: {
         margin: theme.spacing(2)
     },
-    button: {
-        margin: theme.spacing(3)
-    },
     title: {
         padding: theme.spacing(3)
     },
-    textField: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
-    },
     fab: {
-        // bottom: theme.spacing(2),
         left: theme.spacing(25),
     }
 });
