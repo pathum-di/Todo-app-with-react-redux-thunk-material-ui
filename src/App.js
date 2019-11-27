@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import TodoFilter from "./components/todoFilter";
-import AddTodoItem from "./components/addTodoItem";
+import TodoHeader from "./components/TodoHeader";
 import TodoList from "./components/todoList";
 import { withStyles } from '@material-ui/core/styles';
 import { Grid } from "@material-ui/core";
@@ -36,7 +36,7 @@ class App extends Component {
           <Grid item xs={2}>
           </Grid>
           <Grid item xs={8}>            
-            <AddTodoItem />
+            <TodoHeader />
             <TodoFilter />
             <TodoList />
           </Grid>

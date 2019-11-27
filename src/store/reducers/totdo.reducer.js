@@ -6,6 +6,7 @@ const todos = (
     pendingList: [],
     selectedTabName: 'allTasks',
     selectedTaskToEditOrAdd: { id: 0, task: '', },
+    isOpenDeleteModel: false,
   }, action) => {
   switch (action.type) {
 
@@ -32,6 +33,12 @@ const todos = (
       return {
         ...state,
         selectedTaskToEditOrAdd: { id: 0, task: '', }
+      };
+
+    case 'HANDLE_DELETE_MODEL_CLOSE':
+      return {
+        ...state,
+        isOpenDeleteModel: !state.isOpenDeleteModel,
       };
 
     default:

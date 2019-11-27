@@ -7,7 +7,7 @@ import AcUnitIcon from '@material-ui/icons/AcUnit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { withStyles } from '@material-ui/core/styles';
-import { getAllTodoItems, toggleTodoItem, deleteTodoItem, setSelectedTodoForEditing } from './../store/actions/todoList.action'
+import { getAllTodoItems, toggleTodoItem, deleteTodoItem, setSelectedTodoForEditing, handleDeleteModelClose } from './../store/actions/todoList.action'
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -44,12 +44,8 @@ class TodoList extends Component {
     }
 
     handleClickOpen = (todoItem) => {
-        this.setState({ isOpenDeleteConfirmModel: true, selectedTodoItemForDeleting: todoItem });
-    };
-
-    handleClose = () => {
-        this.setState({ isOpenDeleteConfirmModel: false });
-
+        this.props.handleDeleteModelClose();
+        this.setState({ selectedTodoItemForDeleting: todoItem });
     };
 
     handleDeleteConfirm = () => {
@@ -118,14 +114,14 @@ class TodoList extends Component {
                 </List>
 
                 <Dialog
-                    open={this.state.isOpenDeleteConfirmModel}
-                    onClose={this.handleClose}
+                    open={this.props.isOpenDeleteModel}
+                    onClose={this.props.handleDeleteModelClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
                     <DialogTitle id="alert-dialog-title">{"Sure about Deleting Todo Item?"}</DialogTitle>
                     <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">No</Button>
+                        <Button onClick={this.props.handleDeleteModelClose} color="primary">No</Button>
                         <Button onClick={this.handleDeleteConfirm} color="primary" autoFocus>YES</Button>
                     </DialogActions>
                 </Dialog>
@@ -139,6 +135,7 @@ const mapStateToProps = state => {
         pendingList: state.todos.pendingList,
         allItemList: [...state.todos.pendingList, ...state.todos.doneList],
         selectedTabName: state.todos.selectedTabName,
+        isOpenDeleteModel: state.todos.isOpenDeleteModel,
     };
 }
 const mapDispatchToProps = dispatch => {
@@ -155,6 +152,9 @@ const mapDispatchToProps = dispatch => {
         setSelectedTodoForEditing: (todoItemId) => {
             dispatch(setSelectedTodoForEditing(todoItemId));
         },
+        handleDeleteModelClose: () => {
+            dispatch(handleDeleteModelClose());
+        },
     }
 };
 
@@ -168,6 +168,8 @@ TodoList.propTypes = {
     toggleTodoItem: PropTypes.func,
     deleteTodoItem: PropTypes.func,
     setSelectedTodoForEditing: PropTypes.func,
+    handleDeleteModelClose: PropTypes.func,
+    isOpenDeleteModel: PropTypes.bool,
 }
 
 

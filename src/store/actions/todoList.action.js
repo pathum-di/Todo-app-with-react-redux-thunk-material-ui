@@ -128,6 +128,7 @@ export const deleteTodoItem = (todoItemId) => {
             .then(result => {
                 if (result.success) {
                     dispatch(getAllTodoItems());
+                    dispatch(handleDeleteModelClose());
                 }
                 else {
                     console.log('an error occured in delte todo', result.message);
@@ -163,5 +164,11 @@ export const setSelectedTabName = (tabName) => {
 export const clearSelecteedTodoForEditing = () => {
     return {
         type: 'CLEAR_SELECTED_TODO_FOR_EDITING',
+    };
+}
+
+export const handleDeleteModelClose = () => {
+    return {
+        type: 'HANDLE_DELETE_MODEL_CLOSE',
     };
 }

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux';
 import PropTypes from "prop-types";
-import { TextField, Button, Paper, Grid, Typography } from "@material-ui/core";
+import { Paper, TextField } from "@material-ui/core";
 import { withStyles } from '@material-ui/core/styles';
-import { createTodoItem, updateTodoItem, clearSelecteedTodoForEditing } from './../store/actions/todoList.action'
+import { createTodoItem, updateTodoItem, clearSelecteedTodoForEditing } from '../store/actions/todoList.action'
 
 const useStyles = theme => ({
     container: {
@@ -18,10 +18,10 @@ const useStyles = theme => ({
     textField: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
-    },
+    }
 });
 
-class AddTodoItem extends Component {
+class AddOrEditTodoItem extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -71,29 +71,15 @@ class AddTodoItem extends Component {
         const { classes } = this.props;
         return (
             <Paper className={classes.container}>
-                <Typography className={classes.title} variant="h4" component="h4" align='center' >
-                    ToDo App React
-                </Typography>
-                <Grid container>
-                    <Grid item xs={2}></Grid>
-                    <Grid item xs={6}>
-                        <TextField
-                            fullWidth
-                            className={classes.textField}
-                            id="outlined-basic"
-                            label="Add Todo"
-                            margin="normal"
-                            variant="outlined"
-                            value={this.state.newTodo.task}
-                            onChange={this.handleInputChange} />
-                    </Grid>
-                    <Grid item xs={2} >
-                        <Button className={classes.button} color="primary" onClick={this.handleAddTodoItem}>
-                            Save
-                        </Button>
-                    </Grid>
-                    <Grid item xs={2}></Grid>
-                </Grid>
+                <TextField
+                    fullWidth
+                    className={classes.textField}
+                    id="outlined-basic"
+                    label="Add Todo"
+                    margin="normal"
+                    variant="outlined"
+                    value={this.state.newTodo.task}
+                    onChange={this.handleInputChange} />
             </Paper>
         );
     }
@@ -119,7 +105,7 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-AddTodoItem.propTypes = {
+AddOrEditTodoItem.propTypes = {
     classes: PropTypes.object.isRequired,
     selectedTaskToEditOrAdd: PropTypes.object,
     createTodoItem: PropTypes.func,
@@ -130,4 +116,4 @@ AddTodoItem.propTypes = {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withStyles(useStyles)(AddTodoItem));
+)(withStyles(useStyles)(AddOrEditTodoItem));
