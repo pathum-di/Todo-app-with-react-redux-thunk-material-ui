@@ -1,15 +1,17 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux';
-import { Paper, Button, Tooltip, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Avatar, IconButton, Dialog, DialogActions, DialogTitle } from "@material-ui/core";
 import moment from "moment";
 import PropTypes from "prop-types";
 import AcUnitIcon from '@material-ui/icons/AcUnit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import { Paper, Button, Tooltip, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Avatar, IconButton, Dialog, DialogActions, DialogTitle, DialogContent } from "@material-ui/core";
 import { withStyles } from '@material-ui/core/styles';
 import { getAllTodoItems, toggleTodoItem, deleteTodoItem, setSelectedTodoForEditing, handleDeleteModelClose } from './../store/actions/todoList.action'
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
+import AddOrEditTodoItem from './addOrEditTodoItem'
 
 
 const useStyles = theme => ({
@@ -27,6 +29,9 @@ const useStyles = theme => ({
     },
     listItemPending: {
         backgroundColor: 'rgba(238, 199, 184, 0.87);'
+    },
+    modelClose: {
+        left: theme.spacing(10),
     }
 });
 
@@ -35,7 +40,8 @@ class TodoList extends Component {
         super(props);
         this.state = {
             isOpenDeleteConfirmModel: false,
-            selectedTodoItemForDeleting: {}
+            selectedTodoItemForDeleting: {},
+            isOpenEditTodoModel: false,
         };
     }
 
@@ -67,65 +73,92 @@ class TodoList extends Component {
         }
     }
 
+    handleEditTodoModelClickOpen = () => {
+        this.setState({ isOpenEditTodoModel: true });
+    };
+
+    handleEditTodoModelClose = () => {
+        this.setState({ isOpenEditTodoModel: false });
+    };
+
     setSelectedTodoForEditing(todoItem) {
-        // console.log('todoItem to edit :', todoItem);
+        this.handleEditTodoModelClickOpen()
         this.props.setSelectedTodoForEditing(todoItem)
     }
 
     render() {
         const { classes } = this.props;
         return (
-            <Paper className={classes.paper}>
-                <List>
-                    {this.getTodoListDataForSelecetedTab.map((todoItem) => {
-                        return (
-                            <ListItem key={todoItem.id} button className={todoItem.status ? classes.listItemDone : classes.listItemPending}>
-                                <ListItemAvatar>
-                                    <Avatar>
-                                        <AcUnitIcon />
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary={todoItem.task}
-                                    secondary={'Created at : ' + moment(todoItem.created_at).format('DD-MM-YYYY')}
-                                />
-                                <ListItemSecondaryAction>
-                                    <Tooltip title={todoItem.status === 0 ? 'Mark as Completed' : 'Mark as Pending'} placement="top">
-                                        <IconButton edge="end" aria-label="markAsFinishOrPending" onClick={() => { this.props.toggleTodoItem(todoItem) }}>
-                                            {todoItem.status === 0 ?
-                                                <DoneIcon /> :
-                                                <CloseIcon />}
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Edit Todo" placement="top">
-                                        <IconButton edge="end" aria-label="edit" onClick={() => this.setSelectedTodoForEditing(todoItem)}>
-                                            <EditIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Delete Todo" placement="top">
-                                        <IconButton edge="end" aria-label="delete" onClick={() => { this.handleClickOpen(todoItem) }}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                </ListItemSecondaryAction>
-                            </ListItem>
-                        )
-                    })}
-                </List>
+            <React.Fragment>
+                <Paper className={classes.paper}>
+                    <List>
+                        {this.getTodoListDataForSelecetedTab.map((todoItem) => {
+                            return (
+                                <ListItem key={todoItem.id} button className={todoItem.status ? classes.listItemDone : classes.listItemPending}>
+                                    <ListItemAvatar>
+                                        <Avatar>
+                                            <AcUnitIcon />
+                                        </Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText
+                                        primary={todoItem.task}
+                                        secondary={'Created at : ' + moment(todoItem.created_at).format('DD-MM-YYYY')}
+                                    />
+                                    <ListItemSecondaryAction>
+                                        <Tooltip title={todoItem.status === 0 ? 'Mark as Completed' : 'Mark as Pending'} placement="top">
+                                            <IconButton edge="end" aria-label="markAsFinishOrPending" onClick={() => { this.props.toggleTodoItem(todoItem) }}>
+                                                {todoItem.status === 0 ?
+                                                    <DoneIcon /> :
+                                                    <CloseIcon />}
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Edit Todo" placement="top">
+                                            <IconButton edge="end" aria-label="edit" onClick={() => this.setSelectedTodoForEditing(todoItem)}>
+                                                <EditIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Delete Todo" placement="top">
+                                            <IconButton edge="end" aria-label="delete" onClick={() => { this.handleClickOpen(todoItem) }}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </ListItemSecondaryAction>
+                                </ListItem>
+                            )
+                        })}
+                    </List>
+                </Paper>
 
+                {/* delete model */}
                 <Dialog
                     open={this.props.isOpenDeleteModel}
                     onClose={this.props.handleDeleteModelClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{"Sure about Deleting Todo Item?"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{"Sure about Deleting Todo Item?"}
+                    </DialogTitle>
                     <DialogActions>
                         <Button onClick={this.props.handleDeleteModelClose} color="primary">No</Button>
                         <Button onClick={this.handleDeleteConfirm} color="primary" autoFocus>YES</Button>
                     </DialogActions>
                 </Dialog>
-            </Paper>);
+
+                {/* edit model */}
+                <Dialog open={this.state.isOpenEditTodoModel}
+                    onClose={this.handleEditTodoModelClose}
+                    aria-labelledby="form-dialog-title"
+                    maxWidth={'md'}>
+                    <DialogTitle id="form-dialog-title">{'Add Todo Item'}
+                        <IconButton className={classes.modelClose} onClick={this.handleEditTodoModelClose} color="secondary">
+                            <HighlightOffIcon />
+                        </IconButton>
+                    </DialogTitle>
+                    <DialogContent>
+                        <AddOrEditTodoItem />
+                    </DialogContent>
+                </Dialog>
+            </React.Fragment>);
     }
 }
 

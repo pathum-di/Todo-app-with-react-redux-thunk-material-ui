@@ -47,8 +47,15 @@ const todos = (
 }
 
 const getFilteredList = (actionDataList) => {
-  const doneList = actionDataList.filter(todo => todo.status === 1);
-  const pendingList = actionDataList.filter(todo => todo.status === 0);
+  let doneList = [];
+  let pendingList = [];
+  actionDataList.forEach(todoItem => {
+    if (todoItem.status === 1) {
+      doneList.push(todoItem);
+    } else {
+      pendingList.push(todoItem);
+    }
+  });
   return { doneList, pendingList }
 }
 

@@ -1,23 +1,17 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux';
 import PropTypes from "prop-types";
-import { Paper, TextField } from "@material-ui/core";
+import { TextField, Button } from "@material-ui/core";
 import { withStyles } from '@material-ui/core/styles';
 import { createTodoItem, updateTodoItem, clearSelecteedTodoForEditing } from '../store/actions/todoList.action'
 
 const useStyles = theme => ({
-    container: {
-        margin: theme.spacing(2)
-    },
+
     button: {
         margin: theme.spacing(3)
     },
-    title: {
-        padding: theme.spacing(3)
-    },
-    textField: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
+    actionButtonGroup: {
+        alignContent: 'center',
     }
 });
 
@@ -47,9 +41,9 @@ class AddOrEditTodoItem extends Component {
         });
     };
 
-    handleAddTodoItem = () => {
+    handleAddOrEditTodoItem = () => {
 
-        const { newTodo } = this.state
+        const { newTodo } = this.state;
 
         if (newTodo.id === 0 && newTodo.task !== '') {
             this.props.createTodoItem(newTodo);
@@ -66,21 +60,30 @@ class AddOrEditTodoItem extends Component {
         this.props.clearSelecteedTodoForEditing();
 
     }
+    
+    handleResetSelectedTodoItem = () => {
+        this.setState({ newTodo: this.props.selectedTaskToEditOrAdd })
+    }
 
     render() {
         const { classes } = this.props;
+        const selectedId = this.props.selectedTaskToEditOrAdd.id;
+
         return (
-            <Paper className={classes.container}>
+            <React.Fragment>
                 <TextField
                     fullWidth
-                    className={classes.textField}
                     id="outlined-basic"
-                    label="Add Todo"
+                    label={selectedId ? 'Edit Todo Item' : 'Add Todo Item'}
                     margin="normal"
                     variant="outlined"
                     value={this.state.newTodo.task}
                     onChange={this.handleInputChange} />
-            </Paper>
+                <div className={classes.actionButtonGroup}>
+                    <Button className={classes.button} variant="outlined" color="secondary" onClick={this.handleResetSelectedTodoItem}> Reset </Button>
+                    <Button className={classes.button} variant="outlined" color="primary" onClick={this.handleAddOrEditTodoItem}> {selectedId ? 'Edit' : 'Save'} </Button>
+                </div>
+            </React.Fragment>
         );
     }
 }
